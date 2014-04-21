@@ -4,7 +4,7 @@
  * 
  * @package WeChatHelper
  * @author 冰剑
- * @version 2.1.0
+ * @version 2.1.1
  * @link http://www.binjoo.net
  * @dependence 14.3.14
  */
