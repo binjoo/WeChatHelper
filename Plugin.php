@@ -9,7 +9,7 @@
  */
 class WeChatHelper_Plugin implements Typecho_Plugin_Interface {
     public static function activate() {
-        $db = Typecho_Db::get();
+        $db = Typecho_Db::get(); 
         if("Pdo_Mysql" === $db->getAdapterName() || "Mysql" === $db->getAdapterName()){
             $db->query("CREATE TABLE IF NOT EXISTS " . $db->getPrefix() . 'wxh_keywords' . " (
                       `kid` int(11) NOT NULL AUTO_INCREMENT,
