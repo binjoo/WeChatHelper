@@ -107,15 +107,15 @@ class WeChatHelper_Widget_CustomReply extends Widget_Abstract implements Widget_
         $systemSelect .= '</select>';
         $typeOptions['system'] = $typeOptions['system'] . ' ' . $systemSelect;  //系统消息
 
-        $addonsArray = Utils::getAddons();
+        $addonsArray = Typecho_Widget::widget('WeChatHelper_Widget_Addons')->getAddons();
         if(count($addonsArray)){
             $addonsSelect = '<select name="addonsSelect">';
-            foreach ($addonsArray as $key => $value) {
+            foreach ($addonsArray as $row) {
                 $selected = '';
-                if (isset($custom['command']) && $custom['command'] === $key) {
+                if (isset($custom['command']) && $custom['command'] === $row['package']) {
                     $selected = ' selected="true"';
                 }
-                $addonsSelect .= '<option value="' . $key . '"' . $selected . '>' . $value . '</option>';
+                $addonsSelect .= '<option value="' . $row['package'] . '"' . $selected . ' data-param="' . (isset($row['param']) && $row['param'] == 'true' ? 1 : 0) . '">' . $row['name'] . '</option>';
             }
             $addonsSelect .= '</select>';
             $typeOptions['addons'] = $typeOptions['addons'] . ' ' . $addonsSelect;
@@ -140,6 +140,9 @@ class WeChatHelper_Widget_CustomReply extends Widget_Abstract implements Widget_
         $command = new Typecho_Widget_Helper_Form_Element_Hidden('command', NULL, NULL);
         $form->addInput($command);
 
+        $param = new Typecho_Widget_Helper_Form_Element_Hidden('param', NULL, NULL);
+        $form->addInput($param);
+
         $rid = new Typecho_Widget_Helper_Form_Element_Hidden('rid', NULL, NULL);
         $form->addInput($rid);
 
@@ -147,7 +150,7 @@ class WeChatHelper_Widget_CustomReply extends Widget_Abstract implements Widget_
         $form->addInput($do);
 
         $submit = new Typecho_Widget_Helper_Form_Element_Submit(NULL, NULL, _t('保存自定义回复'));
-        $submit->input->setAttribute('class', 'primary');
+        $submit->input->setAttribute('class', 'btn primary');
         $form->addItem($submit);
 
         if (isset($this->request->rid) && 'insert' != $action) {
@@ -157,6 +160,7 @@ class WeChatHelper_Widget_CustomReply extends Widget_Abstract implements Widget_
             $keywords->value($custom['keywords']);
             $type->value($custom['type']);
             $command->value($custom['command']);
+            $param->value($custom['param']);
             $content->value($custom['content']);
             $status->value($custom['status']);
             $rid->value($custom['rid']);
@@ -196,7 +200,7 @@ class WeChatHelper_Widget_CustomReply extends Widget_Abstract implements Widget_
         }
 
         /** 取出数据 */
-        $customReply = $this->request->from('keywords', 'type', 'command', 'content', 'status');
+        $customReply = $this->request->from('keywords', 'type', 'command', 'param', 'content', 'status');
 
         $customReply['created'] = time();
 
@@ -220,7 +224,7 @@ class WeChatHelper_Widget_CustomReply extends Widget_Abstract implements Widget_
             $this->response->goBack();
         }
         /** 取出数据 */
-        $customReply = $this->request->from('keywords', 'type', 'command', 'content', 'status', 'rid');
+        $customReply = $this->request->from('keywords', 'type', 'command', 'param', 'content', 'status', 'rid');
 
         /** 更新数据 */
         $this->db->query($this->update($customReply, $this->db->sql()->where('rid = ?', $this->request->filter('int')->rid)));
@@ -239,7 +243,7 @@ class WeChatHelper_Widget_CustomReply extends Widget_Abstract implements Widget_
     }
 
     public function deleteCustomReply(){
-        $customreplys = $this->request->filter('int')->rid;
+        $customreplys = $this->request->filter('int')->getArray('rid');
         $deleteCount = 0;
 
         if ($customreplys && is_array($customreplys)) {

@@ -6,7 +6,7 @@
  * @license    GNU General Public License 2.0
  * 
  */
-
+include_once 'Utils.php';
 class WeChatHelper_Widget_Config extends Widget_Abstract_Options implements Widget_Interface_Do {
     private $siteUrl;
 
@@ -16,6 +16,9 @@ class WeChatHelper_Widget_Config extends Widget_Abstract_Options implements Widg
     }
     public function execute(){}
 
+    /**
+     * 基础设置
+     */
     public function baseForm() {
         $form = new Typecho_Widget_Helper_Form($this->siteUrl.'action/WeChat?config&do=base', Typecho_Widget_Helper_Form::POST_METHOD);
 
@@ -24,19 +27,63 @@ class WeChatHelper_Widget_Config extends Widget_Abstract_Options implements Widg
         $token->value(isset($this->options->WeChatHelper_token) ? $this->options->WeChatHelper_token : '');
         $form->addInput($token);
 
-        $welcome = new Typecho_Widget_Helper_Form_Element_Textarea('welcome', NULL, '哟，客官，您来啦！'.chr(10).'发送\'h\'让小的给您介绍一下！', _t('关注事件'), _t('用户在关注关注公众号时，微信会把这个消息内容推送到用户，一般用于填写欢迎消息。'));
-        $welcome->value(isset($this->options->WeChatHelper_welcome) ? $this->options->WeChatHelper_welcome : '');
+        $welcome = new Typecho_Widget_Helper_Form_Element_Textarea('welcome', NULL, NULL, _t('欢迎提示语'), _t('用户在关注公众号时，会发送欢迎的提示消息。'));
+        $welcome->value(isset($this->options->WeChatHelper_welcome) ? $this->options->WeChatHelper_welcome : Utils::getDefaultMessage('welcome'));
         $form->addInput($welcome);
 
+        $notfound = new Typecho_Widget_Helper_Form_Element_Textarea('notfound', NULL, NULL, _t('找不到提示语'), _t('没开启第三方平台搜索功能时，会发送找不到的提示消息。'));
+        $notfound->value(isset($this->options->WeChatHelper_notfound) ? $this->options->WeChatHelper_notfound : Utils::getDefaultMessage('notfound'));
+        $form->addInput($notfound);
+
+        $dropTable = new Typecho_Widget_Helper_Form_Element_Radio('dropTable',
+            array('1' => _t('开启'), '0' => _t('关闭')),
+                  NULL,  _t('<span style="color:#B94A48">数据删除</span>'), _t('<span style="color:#B94A48">开启后，禁用插件会删除插件设置数据和数据表。</span>'));
+        $dropTable->value(isset($this->options->WeChatHelper_dropTable) ? $this->options->WeChatHelper_dropTable : '0');
+        $form->addInput($dropTable);
+
         $submit = new Typecho_Widget_Helper_Form_Element_Submit(NULL, NULL, _t('保存设置'));
-        $submit->input->setAttribute('class', 'primary');
+        $submit->input->setAttribute('class', 'btn primary');
         $form->addItem($submit);
 
         return $form;
     }
 
+    /**
+     * 高级功能
+     */
     public function deluxeForm() {
         $form = new Typecho_Widget_Helper_Form($this->siteUrl.'action/WeChat?config&do=deluxe', Typecho_Widget_Helper_Form::POST_METHOD);
+
+        $appid = new Typecho_Widget_Helper_Form_Element_Text('appid', NULL, NULL,
+        _t('APP ID'), _t('TOKEN内容自定义，需要与开发模式服务器配置中填写一致，推荐使用GUID。'));
+        $appid->value(isset($this->options->WeChatHelper_appid) ? $this->options->WeChatHelper_appid : '');
+        $form->addInput($appid);
+
+        $appsecret = new Typecho_Widget_Helper_Form_Element_Text('appsecret', NULL, NULL,
+        _t('APP Secret'), _t('TOKEN内容自定义，需要与开发模式服务器配置中填写一致，推荐使用GUID。'));
+        $appsecret->value(isset($this->options->WeChatHelper_appsecret) ? $this->options->WeChatHelper_appsecret : '');
+        $form->addInput($appsecret);
+
+        $access_token = new Typecho_Widget_Helper_Form_Element_Hidden('access_token', NULL, NULL);
+        $access_token->value(isset($this->options->WeChatHelper_access_token) ? $this->options->WeChatHelper_access_token : '');
+        $form->addInput($access_token);
+
+        $expires_in = new Typecho_Widget_Helper_Form_Element_Hidden('expires_in', NULL, NULL);
+        $expires_in->value(isset($this->options->WeChatHelper_expires_in) ? $this->options->WeChatHelper_expires_in : '0');
+        $form->addInput($expires_in);
+
+        $submit = new Typecho_Widget_Helper_Form_Element_Submit(NULL, NULL, _t('保存设置'));
+        $submit->input->setAttribute('class', 'btn primary');
+        $form->addItem($submit);
+
+        return $form;
+    }
+
+    /**
+     * 第三方
+     */
+    public function thirdPartyForm() {
+        $form = new Typecho_Widget_Helper_Form($this->siteUrl.'action/WeChat?config&do=thirdParty', Typecho_Widget_Helper_Form::POST_METHOD);
 
         $thirdPartyUrl = new Typecho_Widget_Helper_Form_Element_Text('thirdPartyUrl', NULL, $this->options->WeChatHelper_thirdPartyUrl,
         _t('第三方平台链接'), _t('推荐平台：<a href="http://cloud.xiaoi.com/">小i机器人</a>'));
@@ -52,23 +99,41 @@ class WeChatHelper_Widget_Config extends Widget_Abstract_Options implements Widg
         $thirdPartySearch->value(isset($this->options->WeChatHelper_thirdPartySearch) ? $this->options->WeChatHelper_thirdPartySearch : '0');
         $form->addInput($thirdPartySearch);
 
-        $dropTable = new Typecho_Widget_Helper_Form_Element_Radio('dropTable',
-            array('1' => _t('开启'), '0' => _t('关闭')),
-                  NULL,  _t('数据删除'), _t('禁用插件后，是否删除插件设置数据和数据表。'));
-        $dropTable->value(isset($this->options->WeChatHelper_dropTable) ? $this->options->WeChatHelper_dropTable : '0');
-        $form->addInput($dropTable);
+        $submit = new Typecho_Widget_Helper_Form_Element_Submit(NULL, NULL, _t('保存设置'));
+        $submit->input->setAttribute('class', 'btn primary');
+        $form->addItem($submit);
+
+        return $form;
+    }
+
+    /**
+     * 积分设置
+     */
+    public function creditForm() {
+        $form = new Typecho_Widget_Helper_Form($this->siteUrl.'action/WeChat?config&do=credit', Typecho_Widget_Helper_Form::POST_METHOD);
+
+        $subscribe_credit = new Typecho_Widget_Helper_Form_Element_Text('subscribe_credit', NULL, NULL,
+        _t('订阅积分'), _t('订阅后，初始赠送积分。'));
+        $subscribe_credit->value(isset($this->options->WeChatHelper_subscribe_credit) ? $this->options->WeChatHelper_subscribe_credit : '0');
+        $form->addInput($subscribe_credit);
 
         $submit = new Typecho_Widget_Helper_Form_Element_Submit(NULL, NULL, _t('保存设置'));
-        $submit->input->setAttribute('class', 'primary');
+        $submit->input->setAttribute('class', 'btn primary');
         $form->addItem($submit);
 
         return $form;
     }
 
     public function updateConfig(){
-        $settings = $this->request->from('token', 'welcome','thirdPartyUrl', 'thirdPartyToken', 'thirdPartySearch', 'dropTable');
+        $baseForm = array('token', 'welcome', 'notfound', 'dropTable');
+        $deluxeForm = array('appid', 'appsecret', 'access_token', 'expires_in');
+        $thirdPartyForm = array('thirdPartyUrl', 'thirdPartyToken', 'thirdPartySearch');
+        $creditForm = array('subscribe_credit');
+        $do = $this->request->get('do').'Form';
+
+        $settings = $this->request->from(${$do});   //动态传递表单参数
         foreach ($settings as $key => $value) {
-            if(!is_null($settings[$key])){    //判断参数是否为NULL
+            //if(!is_null($settings[$key])){    //判断参数是否为NULL
                 $row['name'] = 'WeChatHelper_'.$key;
                 $row['value'] = $value;
                 if($this->db->fetchRow($this->select()->where('name = ?', $row['name'])->limit(1))){
@@ -76,7 +141,7 @@ class WeChatHelper_Widget_Config extends Widget_Abstract_Options implements Widg
                 }else{
                     $this->insert($row);
                 }
-            }
+            //}
         }
         /** 提示信息 */
         $this->widget('Widget_Notice')->set(_t('设置已经保存'), 'success');
@@ -86,6 +151,6 @@ class WeChatHelper_Widget_Config extends Widget_Abstract_Options implements Widg
     }
 
     public function action() {
-        $this->on($this->request->is('do=base') || $this->request->is('do=deluxe'))->updateConfig();
+        $this->on($this->request->is('do'))->updateConfig();
     }
 }

@@ -24,7 +24,10 @@ class WeChatHelper_Widget_WeChat extends Widget_Abstract implements Widget_Inter
      */
     public function isEvent(){
         if($this->postObj->Event == "subscribe"){
+            $info = Typecho_Widget::widget('WeChatHelper_Widget_Users')->subscribe($this->postObj);
             $this->result->setText(isset($this->options->WeChatHelper_welcome) ? $this->options->WeChatHelper_welcome : '')->setMsgType(MessageTemplate::TEXT)->send();
+        }else if($this->postObj->Event == "unsubscribe"){
+            $info = Typecho_Widget::widget('WeChatHelper_Widget_Users')->unsubscribe($this->postObj);
         }
     }
     /**
@@ -43,7 +46,7 @@ class WeChatHelper_Widget_WeChat extends Widget_Abstract implements Widget_Inter
             if($custom->type === 'text'){
                 $this->result->setText($custom->content)->setMsgType(MessageTemplate::TEXT)->send();
             }else if($custom->type === 'image'){
-                echo '';
+                $this->result->setText('助手暂时还不支持图片回复！')->setMsgType(MessageTemplate::TEXT)->send();
             }else if($custom->type === 'system'){
                 $this->blogPost($custom->command);
             }else if($custom->type === 'addons'){
@@ -52,29 +55,39 @@ class WeChatHelper_Widget_WeChat extends Widget_Abstract implements Widget_Inter
         }else if(isset($this->options->WeChatHelper_thirdPartySearch) && $this->options->WeChatHelper_thirdPartyUrl && $this->options->WeChatHelper_thirdPartyToken && $this->options->WeChatHelper_thirdPartySearch) { //第三方处理
             $this->thirdParty();
         }else{
-            echo '完全不明白你在说什么！';
+            $this->result->setText(isset($this->options->WeChatHelper_notfound) ? $this->options->WeChatHelper_notfound : '完全不明白你在说什么！')->setMsgType(MessageTemplate::TEXT)->send();
         }
     }
     /**
      * 图片消息
      */
-    public function isImage(){}
+    public function isImage(){
+        $this->result->setText('助手暂时还不支持图片消息！')->setMsgType(MessageTemplate::TEXT)->send();
+    }
     /**
      * 语音消息
      */
-    public function isVoice(){}
+    public function isVoice(){
+        $this->result->setText('助手暂时还不支持语音消息！')->setMsgType(MessageTemplate::TEXT)->send();
+    }
     /**
      * 视频消息
      */
-    public function isVideo(){}
+    public function isVideo(){
+        $this->result->setText('助手暂时还不支持视频消息！')->setMsgType(MessageTemplate::TEXT)->send();
+    }
     /**
      * 地理位置消息
      */
-    public function isLocation(){}
+    public function isLocation(){
+        $this->result->setText('助手暂时还不支持地理位置消息！')->setMsgType(MessageTemplate::TEXT)->send();
+    }
     /**
      * 链接消息
      */
-    public function isLink(){}
+    public function isLink(){
+        $this->result->setText('助手暂时还不支持链接消息！')->setMsgType(MessageTemplate::TEXT)->send();
+    }
 
     /**
      * 是否带有参数
@@ -185,9 +198,9 @@ class WeChatHelper_Widget_WeChat extends Widget_Abstract implements Widget_Inter
     }
 
     public function addonsAction($action, $postObj, $params = NULL){
-        $file = __TYPECHO_ROOT_DIR__ . '/' . __TYPECHO_PLUGIN_DIR__ . '/' . 'WeChatHelper/Addons' . '/'.$action;
+        $file = __TYPECHO_ROOT_DIR__ . '/' . __TYPECHO_PLUGIN_DIR__ . '/WeChatHelper/Addons/'.$action.'/Addon.php';
         include_once $file;
-        $info = Utils::parseInfo($file);
+        $info = Typecho_Widget::widget('WeChatHelper_Widget_Addons')->parseInfo($file);
         $class = 'Addons'.$info['package'];
         $addons = new $class($this->result, $postObj, $params);
         $addons->execute();

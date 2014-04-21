@@ -7,37 +7,36 @@ $currentUrl = Helper::url("WeChatHelper/Page/CustomReply.php");
 ?>
 <div class="main">
     <div class="body container">
-        <div class="colgroup">
-            <div class="typecho-page-title col-mb-12">
-                <h2>自定义回复</h2>
-            </div>
+        <div class="typecho-page-title">
+            <h2><?php _e($menu->title);?><a href="<?php _e($currentUrl) ?>">新增</a></h2>
         </div>
-        <div class="colgroup typecho-page-main manage-metas">
+        <div class="row typecho-page-main">
             <div class="col-mb-12 col-tb-8" role="main">
                 <div class="typecho-list-operate clearfix">
                     <form action="<?php _e($currentUrl) ?>" method="get">
-                    <div class="operate">
-                        <label><i class="sr-only">全选</i><input type="checkbox" class="typecho-table-select-all"></label>
-                        <div class="btn-group btn-drop">
-                            <button class="dropdown-toggle btn-s" type="button"><i class="sr-only">操作</i>选中项 <i class="i-caret-down"></i></button>
-                            <ul class="dropdown-menu">
-                                <li><a lang="你确认要删除这些文章吗?" href="<?php $options->index('/action/WeChat?customreply&do=delete') ?>">删除</a></li>
-                            </ul>
-                        </div>  
-                    </div>
-                    <div class="search" role="search">
-                        <input type="hidden" class="text-s" value="WeChatHelper/Page/CustomReply.php" name="panel">
-                        <input type="text" class="text-s" placeholder="请输入关键字" value="" name="keywords">
-                        <select name="type">
-                            <option value="">全部类型</option>
-                            <?php foreach (Utils::getMsgType() as $key => $value) {?>
-                                <option value="<?php _e($key)?>" <?php (isset($request->type) && $request->type == $key) ? _e('selected')  : _e('') ?>><?php _e($value)?></option>
-                            <?php } ?>
-                        </select>
-                        <button type="submit" class="btn-s">筛选</button>
-                    </div>
+                        <div class="operate">
+                            <label><i class="sr-only">全选</i><input type="checkbox" class="typecho-table-select-all"></label>
+                            <div class="btn-group btn-drop">
+                                <button class="btn dropdown-toggle btn-s" type="button"><i class="sr-only">操作</i>选中项 <i class="i-caret-down"></i></button>
+                                <ul class="dropdown-menu">
+                                    <li><a lang="你确认要删除这些自定义回复吗?" href="<?php $options->index('/action/WeChat?customreply&do=delete') ?>">删除</a></li>
+                                </ul>
+                            </div>  
+                        </div>
+                        <div class="search" role="search">
+                            <input type="hidden" class="text-s" value="WeChatHelper/Page/CustomReply.php" name="panel">
+                            <input type="text" class="text-s" placeholder="请输入关键字" value="" name="keywords">
+                            <select name="type">
+                                <option value="">全部类型</option>
+                                <?php foreach (Utils::getMsgType() as $key => $value) {?>
+                                    <option value="<?php _e($key)?>" <?php (isset($request->type) && $request->type == $key) ? _e('selected')  : _e('') ?>><?php _e($value)?></option>
+                                <?php } ?>
+                            </select>
+                            <button type="submit" class="btn btn-s">筛选</button>
+                        </div>
                     </form>
                 </div>
+
                 <form method="post" name="manage_categories" class="operate-form">
                 <div class="typecho-table-wrap">
                     <table class="typecho-list-table">
@@ -111,7 +110,7 @@ include 'common-js.php';
             checkEl     :   'input[type=checkbox]',
             rowEl       :   'tr',
             selectAllEl :   '.typecho-table-select-all',
-            actionEl    :   '.dropdown-menu a'
+            actionEl    :   '.dropdown-menu a,button.btn-operate'
         });
 
         $('.btn-drop').dropdownMenu({
@@ -124,13 +123,16 @@ include 'common-js.php';
                 var s = $('select[name=syscmdSelect]').find("option:selected");
                 $('textarea[name=content]').attr('readonly', true).text(s.text());
                 $('input[name=command]').val(s.val());
+                $('input[name=param]').val('');
             }else if($("input[name=type]:checked").val() == 'addons'){
                 var s = $('select[name=addonsSelect]').find("option:selected");
                 $('textarea[name=content]').attr('readonly', true).text(s.text());
                 $('input[name=command]').val(s.val());
+                $('input[name=param]').val(s.attr('data-param'));
             }else{
                 $('textarea[name=content]').attr('readonly', false).text('');
                 $('input[name=command]').val('');
+                $('input[name=param]').val('');
             }
         });
 

@@ -1,5 +1,12 @@
 <?php
 class Utils {
+    public static function getDefaultMessage($msg){
+        $tmp = array(
+            'welcome'       => '哟，客官，您来啦！'.chr(10).'发送\'h\'让小的给您介绍一下！',
+            'notfound'      => '对不起，我完全不明白你在说什么！'
+        );
+        return $tmp[$msg];
+    }
     public static function getMsgType($type = NULL){
         $result = array('text' => '文本消息',
                         //'image' => '图片消息',
@@ -19,54 +26,31 @@ class Utils {
         return $result;
     }
 
-    public static function getAddons(){
-        $files = glob(__TYPECHO_ROOT_DIR__ . '/' . __TYPECHO_PLUGIN_DIR__ . '/' . 'WeChatHelper/Addons' . '/*.php');
-
-        $result = array();
-        foreach ($files as $file) {
-            $info = Utils::parseInfo($file);
-            $file = basename($file);
-            
-            if ('index.php' != $file && $info['name'] != '' && $info['package'] != '') {
-                $result[$file] = $info['name'];
-            }
-        }
-        return $result;
-    }
-
-    public static function parseInfo($file){
-        $tokens = token_get_all(file_get_contents($file));
-        $isDoc = false;
-
-        $info = array(
-            'name'   =>  '',
-            'author'    =>  '',
-            'package'   =>  '',
-            'version'   =>  ''
-        );
-
-        foreach ($tokens as $token) {
-            if (is_array($token) && T_DOC_COMMENT == $token[0]) {
-                /** 分行读取 */
-                $lines = preg_split("(\r|\n)", $token[1]);
-                foreach ($lines as $line) {
-                    $line = trim($line);
-                    if (!empty($line) && '*' == $line[0]) {
-                        $line = trim(substr($line, 1));
-
-                        if (!empty($line) && '@' == $line[0]) {
-                            $line = trim(substr($line, 1));
-                            $args = explode(' ', $line);
-                            $key = array_shift($args);
-                            if (isset($key)) {
-                                $info[$key] = trim(implode(' ', $args));
-                            }
-                        }
-                    }
+    public static function getAccessToken(){
+        $db = Typecho_Db::get();
+        $options = Typecho_Widget::widget('Widget_Options');
+        if(isset($options->WeChatHelper_appid) && isset($options->WeChatHelper_appsecret)){
+            if(isset($options->WeChatHelper_access_token) && isset($options->WeChatHelper_expires_in) && $options->WeChatHelper_expires_in > time()){
+                return $options->WeChatHelper_access_token;
+            }else{
+                $client = Typecho_Http_Client::get();
+                $params = array('grant_type' => 'client_credential',
+                                'appid' => $options->WeChatHelper_appid, 'secret' => $options->WeChatHelper_appsecret);
+                $response = $client->setQuery($params)->send('https://api.weixin.qq.com/cgi-bin/token');
+                $response = json_decode($response);
+                if(isset($response->errcode)){
+                    //throw new Typecho_Plugin_Exception(_t('对不起，请求错误。ErrCode：'.$response->errcode.' - ErrMsg：'.$response->errmsg));
+                    return NULL;
+                }else{
+                    $db->query($db->update('table.options')->rows(array('value' => $response->access_token))->where('name = ?', 'WeChatHelper_access_token'));
+                    $db->query($db->update('table.options')->rows(array('value' => time() + $response->expires_in))->where('name = ?', 'WeChatHelper_expires_in'));
+                    return $response->access_token;
                 }
             }
+        }else{
+            //throw new Typecho_Plugin_Exception(_t('对不起, 请先在高级功能中填写正确的APP ID和APP Secret。'));
+            return NULL;
         }
-        return $info;
     }
 }
 

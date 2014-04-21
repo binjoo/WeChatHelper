@@ -3,9 +3,9 @@
  * @name 驾驶执照考试
  * @package DrivingTest
  * @author 冰剑
+ * @link http://www.binjoo.net
+ * @description 考驾照科目一练习
  * @version 1.0.0
- *
- * @param false
  */
 class AddonsDrivingTest {
     private $result;

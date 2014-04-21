@@ -67,9 +67,11 @@ class WeChatHelper_Action extends Typecho_Widget implements Widget_Interface_Do
     }
 
     public function action(){
-
         if($this->request->isGet()){
             $this->on($this->request->is('valid'))->valid();
+            if($this->request->is('users')){  //用户业务
+                Typecho_Widget::widget('WeChatHelper_Widget_Users')->action();
+            }
         }
         if($this->request->isPost()){
             $this->on($this->request->is('valid'))->postAction();
@@ -77,6 +79,10 @@ class WeChatHelper_Action extends Typecho_Widget implements Widget_Interface_Do
                 Typecho_Widget::widget('WeChatHelper_Widget_Config')->action();
             }else if($this->request->is('customreply')){  //自定义回复业务
                 Typecho_Widget::widget('WeChatHelper_Widget_CustomReply')->action();
+            }else if($this->request->is('users')){  //用户业务
+                Typecho_Widget::widget('WeChatHelper_Widget_Users')->action();
+            }else if($this->request->is('menus')){  //菜单业务
+                Typecho_Widget::widget('WeChatHelper_Widget_Menus')->action();
             }
         }
     }

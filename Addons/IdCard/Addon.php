@@ -1,13 +1,14 @@
 <?php
 /**
- * @name 手机归属地
- * @package Phone
+ * @name 身份证信息查询
+ * @package IdCard
  * @author 冰剑
+ * @link http://www.binjoo.net
  * @version 1.0.0
  *
  * @param true
  */
-class AddonsPhone {
+class AddonsIdCard {
     private $result;
     private $postObj;
     private $params;
@@ -20,11 +21,11 @@ class AddonsPhone {
         $this->postObj = $postObj;
         $this->params = $params;
 
-        $this->query = array('app' => 'phone.get',
+        $this->query = array('app' => 'idcard.get',
                               'format' => 'json',
                               'appkey' => '10755',
                               'sign' => 'ce865fa86edc8cdbfe59b3cc27fe621b',
-                              'phone' => '');
+                              'idcard' => '');
     }
 
     public function execute(){
@@ -33,7 +34,7 @@ class AddonsPhone {
 
     private function get(){
         if($this->params){
-            $this->query['phone'] = $this->params['param'];
+            $this->query['idcard'] = $this->params['param'];
         }
         $this->result->setMsgType(MessageTemplate::TEXT);
         $client = Typecho_Http_Client::get();
@@ -41,10 +42,10 @@ class AddonsPhone {
         $response = json_decode($response);
 
         if($response->success){
-            $text = '号码：'.$response->result->phone.chr(10);
+            $text = '号码：'.$response->result->idcard.chr(10);
             $text .= '地区：'.$response->result->att.chr(10);
-            $text .= '区号：'.$response->result->area.chr(10);
-            $text .= '类型：'.$response->result->ctype;
+            $text .= '出生：'.$response->result->born.chr(10);
+            $text .= '性别：'.$response->result->sex;
         }else{
             $text = $response->msg;
         }
