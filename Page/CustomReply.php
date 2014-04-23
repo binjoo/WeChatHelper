@@ -19,7 +19,7 @@ $currentUrl = Helper::url("WeChatHelper/Page/CustomReply.php");
                             <div class="btn-group btn-drop">
                                 <button class="btn dropdown-toggle btn-s" type="button"><i class="sr-only">操作</i>选中项 <i class="i-caret-down"></i></button>
                                 <ul class="dropdown-menu">
-                                    <li><a lang="你确认要删除这些自定义回复吗?" href="<?php $options->index('/action/WeChat?customreply&do=delete') ?>">删除</a></li>
+                                    <li><a lang="你确认要删除这些自定义回复吗?" href="<?php $security->index('/action/WeChat?customreply&do=delete') ?>">删除</a></li>
                                 </ul>
                             </div>  
                         </div>
@@ -68,7 +68,7 @@ $currentUrl = Helper::url("WeChatHelper/Page/CustomReply.php");
                                     <tr id="rid-customreply-<?php $customreply->rid(); ?>">
                                         <td><input type="checkbox" value="<?php $customreply->rid(); ?>" name="rid[]"></td>
                                         <td>
-                                            <a href="<?php _e(Helper::url('WeChatHelper/Page/CustomReply.php').'&page='.$customreply->getCurrentPage().'&rid='.$customreply->rid) ?>"><?php $customreply->keywords(); ?></a>
+                                            <a href="<?php _e($currentUrl.'&page='.$customreply->getCurrentPage().'&rid='.$customreply->rid) ?>"><?php $customreply->keywords(); ?></a>
                                         </td>
                                         <td><?php _e(Utils::getMsgType($customreply->type)) ?></td>
                                         <td><?php $customreply->content(); ?></td>

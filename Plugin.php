@@ -4,7 +4,7 @@
  * 
  * @package WeChatHelper
  * @author 冰剑
- * @version 2.1.1
+ * @version 2.2.0
  * @link http://www.binjoo.net
  * @dependence 14.3.14
  */
@@ -56,6 +56,21 @@ class WeChatHelper_Plugin implements Typecho_Plugin_Interface {
                       `synctime` int(10) DEFAULT '0',
                       PRIMARY KEY (`uid`)
                     ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
+            /**
+             * 创建自定义菜单表
+             */
+            $db->query("CREATE TABLE IF NOT EXISTS " . $db->getPrefix() . 'wxh_menus' . " (
+                      `mid` int(11) NOT NULL AUTO_INCREMENT,
+                      `level` varchar(10) DEFAULT 'button',
+                      `name` varchar(200) DEFAULT '',
+                      `type` varchar(10) DEFAULT 'view',
+                      `value` varchar(200) DEFAULT '',
+                      `sort` int(3) DEFAULT '0',
+                      `order` int(3) DEFAULT '1',
+                      `parent` int(11) DEFAULT '0',
+                      `created` int(10) DEFAULT '0',
+                      PRIMARY KEY (`mid`)
+                    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
         }else{
             throw new Typecho_Plugin_Exception(_t('对不起, 本插件仅支持MySQL数据库。'));
         }
@@ -75,7 +90,7 @@ class WeChatHelper_Plugin implements Typecho_Plugin_Interface {
         $options = Typecho_Widget::widget('Widget_Options');
         if (isset($options->WeChatHelper_dropTable) && $options->WeChatHelper_dropTable) {
             if("Pdo_Mysql" === $db->getAdapterName() || "Mysql" === $db->getAdapterName()){
-               $db->query("drop table ".$db->getPrefix()."wxh_keywords, ".$db->getPrefix()."wxh_reply, ".$db->getPrefix()."wxh_users");
+               $db->query("drop table ".$db->getPrefix()."wxh_keywords, ".$db->getPrefix()."wxh_reply, ".$db->getPrefix()."wxh_users, ".$db->getPrefix()."wxh_menus");
                $db->query($db->sql()->delete('table.options')->where('name like ?', "WeChatHelper_%"));
             }
         }

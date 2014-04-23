@@ -308,8 +308,10 @@ class WeChatHelper_Widget_CustomReply extends Widget_Abstract implements Widget_
         return $result->num ? false : true;
     }
     public function action() {
+        $this->security->protect();
         $this->on($this->request->is('do=insert'))->insertCustomReply();
         $this->on($this->request->is('do=update'))->updateCustomReply();
         $this->on($this->request->is('do=delete'))->deleteCustomReply();
+        $this->response->redirect($this->options->adminUrl);
     }
 }

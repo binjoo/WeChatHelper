@@ -1,5 +1,7 @@
 <?php
 class Utils {
+    const MENU_CREATE_URL = 'https://api.weixin.qq.com/cgi-bin/menu/create';
+    const MENU_REMOVE_URL = 'https://api.weixin.qq.com/cgi-bin/menu/delete';
     public static function getDefaultMessage($msg){
         $tmp = array(
             'welcome'       => '哟，客官，您来啦！'.chr(10).'发送\'h\'让小的给您介绍一下！',

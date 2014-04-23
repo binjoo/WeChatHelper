@@ -13,7 +13,7 @@ $siteUrl = Helper::options()->siteUrl;
             <div class="col-mb-12 typecho-list">
                 <div class="typecho-list-operate clearfix">
                     <div class="operate">
-                        <form action="<?php _e($siteUrl.'action/WeChat?users&do=syncList') ?>" method="post">
+                        <form action="<?php $security->index('/action/WeChat?users&do=syncList') ?>" method="post">
                             <button class="btn dropdown-toggle btn-s" type="submit">同步微信关注者数据</button>
                         </form>
                     </div>
@@ -70,7 +70,8 @@ $siteUrl = Helper::options()->siteUrl;
                                         <td><?php _e($users->credits) ?></td>
                                         <td><?php _e($users->bindVal) ?></td>
                                         <td>
-                                            <a href="<?php _e($siteUrl.'action/WeChat?users&do=syncInfo&page='.$users->getCurrentPage().'&uid='.$users->uid) ?>">更新</a>｜<a href="#">详情</a>
+                                        
+                                            <a href="<?php $security->index('/action/WeChat?users&do=syncInfo&page='.$users->getCurrentPage().'&uid='.$users->uid) ?>">更新</a>｜<a href="#">详情</a>
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>

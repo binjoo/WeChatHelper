@@ -264,7 +264,9 @@ class WeChatHelper_Widget_Users extends Widget_Abstract implements Widget_Interf
     }
 
     public function action() {
+        $this->security->protect();
         $this->on($this->request->is('do=syncList'))->syncUserList();
         $this->on($this->request->is('do=syncInfo'))->syncUserInfo();
+        $this->response->redirect($this->options->adminUrl);
     }
 }
