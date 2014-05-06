@@ -8,11 +8,8 @@
  */
 include_once 'Utils.php';
 class WeChatHelper_Widget_Config extends Widget_Abstract_Options implements Widget_Interface_Do {
-    private $siteUrl;
-
     public function __construct($request, $response, $params = NULL) {
         parent::__construct($request, $response, $params);
-        $this->siteUrl = Helper::options()->siteUrl;
     }
     public function execute(){}
 
@@ -20,7 +17,7 @@ class WeChatHelper_Widget_Config extends Widget_Abstract_Options implements Widg
      * 基础设置
      */
     public function baseForm() {
-        $form = new Typecho_Widget_Helper_Form($this->siteUrl.'action/WeChat?config&do=base', Typecho_Widget_Helper_Form::POST_METHOD);
+        $form = new Typecho_Widget_Helper_Form($this->security->getIndex('action/WeChat?config&do=base'), Typecho_Widget_Helper_Form::POST_METHOD);
 
         $token = new Typecho_Widget_Helper_Form_Element_Text('token', NULL, NULL,
         _t('TOKEN'), _t('TOKEN内容自定义，需要与开发模式服务器配置中填写一致，推荐使用GUID。'));
@@ -52,7 +49,7 @@ class WeChatHelper_Widget_Config extends Widget_Abstract_Options implements Widg
      * 高级功能
      */
     public function deluxeForm() {
-        $form = new Typecho_Widget_Helper_Form($this->siteUrl.'action/WeChat?config&do=deluxe', Typecho_Widget_Helper_Form::POST_METHOD);
+        $form = new Typecho_Widget_Helper_Form($this->security->getIndex('action/WeChat?config&do=deluxe'), Typecho_Widget_Helper_Form::POST_METHOD);
 
         $appid = new Typecho_Widget_Helper_Form_Element_Text('appid', NULL, NULL,
         _t('APP ID'), _t('TOKEN内容自定义，需要与开发模式服务器配置中填写一致，推荐使用GUID。'));
@@ -83,7 +80,7 @@ class WeChatHelper_Widget_Config extends Widget_Abstract_Options implements Widg
      * 第三方
      */
     public function thirdPartyForm() {
-        $form = new Typecho_Widget_Helper_Form($this->siteUrl.'action/WeChat?config&do=thirdParty', Typecho_Widget_Helper_Form::POST_METHOD);
+        $form = new Typecho_Widget_Helper_Form($this->security->getIndex('action/WeChat?config&do=thirdParty'), Typecho_Widget_Helper_Form::POST_METHOD);
 
         $thirdPartyUrl = new Typecho_Widget_Helper_Form_Element_Text('thirdPartyUrl', NULL, $this->options->WeChatHelper_thirdPartyUrl,
         _t('第三方平台链接'), _t('推荐平台：<a href="http://cloud.xiaoi.com/">小i机器人</a>'));
@@ -110,7 +107,7 @@ class WeChatHelper_Widget_Config extends Widget_Abstract_Options implements Widg
      * 积分设置
      */
     public function creditForm() {
-        $form = new Typecho_Widget_Helper_Form($this->siteUrl.'action/WeChat?config&do=credit', Typecho_Widget_Helper_Form::POST_METHOD);
+        $form = new Typecho_Widget_Helper_Form($this->security->getIndex('action/WeChat?config&do=credit'), Typecho_Widget_Helper_Form::POST_METHOD);
 
         $subscribe_credit = new Typecho_Widget_Helper_Form_Element_Text('subscribe_credit', NULL, NULL,
         _t('订阅积分'), _t('订阅后，初始赠送积分。'));
