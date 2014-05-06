@@ -88,7 +88,7 @@ class WeChatHelper_Widget_CustomReply extends Widget_Abstract implements Widget_
         }
 
         /** 构建表格 */
-        $form = new Typecho_Widget_Helper_Form($this->security->getIndex('action/WeChat?customreply'), Typecho_Widget_Helper_Form::POST_METHOD);
+        $form = new Typecho_Widget_Helper_Form($this->siteUrl.'action/WeChat?customreply', Typecho_Widget_Helper_Form::POST_METHOD);
 
         $keywords = new Typecho_Widget_Helper_Form_Element_Text('keywords', NULL, NULL,
         _t('关键字'), _t('多个关键字请用英文逗号分开，如：typecho,binjoo,冰剑'));
