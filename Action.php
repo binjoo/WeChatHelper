@@ -27,7 +27,7 @@ class WeChatHelper_Action extends Typecho_Widget implements Widget_Interface_Do
 
     public function valid() {
         $echoStr = $this->request->get('echostr');
-        if($this->checkSignature($this->options->WeChatHelper_token)){
+        if($this->checkSignature($this->options->WCH_token)){
             echo $echoStr;
             exit;
         }

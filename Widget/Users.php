@@ -133,7 +133,7 @@ class WeChatHelper_Widget_Users extends Widget_Abstract implements Widget_Interf
             }else{
                 $user = array('openid' => $postObj->FromUserName, 'subscribe_time' => time(), 'created' => time());
             }
-            $user['credits'] = isset($this->options->WeChatHelper_subscribe_credit) ? $this->options->WeChatHelper_subscribe_credit : '0';
+            $user['credits'] = isset($this->options->WCH_subscribe_credit) ? $this->options->WCH_subscribe_credit : '0';
             $user['uid'] = $this->insert($user);
         }else{
             $user['status'] = '1';

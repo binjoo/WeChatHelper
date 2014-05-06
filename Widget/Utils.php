@@ -31,13 +31,13 @@ class Utils {
     public static function getAccessToken(){
         $db = Typecho_Db::get();
         $options = Typecho_Widget::widget('Widget_Options');
-        if(isset($options->WeChatHelper_appid) && isset($options->WeChatHelper_appsecret)){
-            if(isset($options->WeChatHelper_access_token) && isset($options->WeChatHelper_expires_in) && $options->WeChatHelper_expires_in > time()){
-                return $options->WeChatHelper_access_token;
+        if(isset($options->WCH_appid) && isset($options->WCH_appsecret)){
+            if(isset($options->WCH_access_token) && isset($options->WCH_expires_in) && $options->WCH_expires_in > time()){
+                return $options->WCH_access_token;
             }else{
                 $client = Typecho_Http_Client::get();
                 $params = array('grant_type' => 'client_credential',
-                                'appid' => $options->WeChatHelper_appid, 'secret' => $options->WeChatHelper_appsecret);
+                                'appid' => $options->WCH_appid, 'secret' => $options->WCH_appsecret);
                 $response = $client->setQuery($params)->send('https://api.weixin.qq.com/cgi-bin/token');
                 $response = json_decode($response);
                 if(isset($response->errcode)){

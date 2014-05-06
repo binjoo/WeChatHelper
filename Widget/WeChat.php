@@ -25,7 +25,7 @@ class WeChatHelper_Widget_WeChat extends Widget_Abstract implements Widget_Inter
     public function isEvent(){
         if($this->postObj->Event == "subscribe"){
             $info = Typecho_Widget::widget('WeChatHelper_Widget_Users')->subscribe($this->postObj);
-            $this->result->setText(isset($this->options->WeChatHelper_welcome) ? $this->options->WeChatHelper_welcome : '')->setMsgType(MessageTemplate::TEXT)->send();
+            $this->result->setText(isset($this->options->WCH_welcome) ? $this->options->WCH_welcome : '')->setMsgType(MessageTemplate::TEXT)->send();
         }else if($this->postObj->Event == "unsubscribe"){
             $info = Typecho_Widget::widget('WeChatHelper_Widget_Users')->unsubscribe($this->postObj);
         }
@@ -52,10 +52,10 @@ class WeChatHelper_Widget_WeChat extends Widget_Abstract implements Widget_Inter
             }else if($custom->type === 'addons'){
                 $this->addonsAction($custom->command, $this->postObj, $params);
             }
-        }else if(isset($this->options->WeChatHelper_thirdPartySearch) && $this->options->WeChatHelper_thirdPartyUrl && $this->options->WeChatHelper_thirdPartyToken && $this->options->WeChatHelper_thirdPartySearch) { //第三方处理
+        }else if(isset($this->options->WCH_thirdPartySearch) && $this->options->WCH_thirdPartyUrl && $this->options->WCH_thirdPartyToken && $this->options->WCH_thirdPartySearch) { //第三方处理
             $this->thirdParty();
         }else{
-            $this->result->setText(isset($this->options->WeChatHelper_notfound) ? $this->options->WeChatHelper_notfound : '完全不明白你在说什么！')->setMsgType(MessageTemplate::TEXT)->send();
+            $this->result->setText(isset($this->options->WCH_notfound) ? $this->options->WCH_notfound : '完全不明白你在说什么！')->setMsgType(MessageTemplate::TEXT)->send();
         }
     }
     /**
@@ -114,7 +114,7 @@ class WeChatHelper_Widget_WeChat extends Widget_Abstract implements Widget_Inter
      */
     public function thirdParty(){
         $postStr = file_get_contents("php://input");
-        $params['signature'] = $this->options->WeChatHelper_thirdPartyToken;
+        $params['signature'] = $this->options->WCH_thirdPartyToken;
         $params['timestamp'] = time();
         $params['nonce'] = rand(100000000, 999999999);
 
@@ -123,7 +123,7 @@ class WeChatHelper_Widget_WeChat extends Widget_Abstract implements Widget_Inter
         ->setHeader('User-Agent', $this->useragent)
         ->setQuery($params)
         ->setData($postStr)
-        ->send($this->options->WeChatHelper_thirdPartyUrl);
+        ->send($this->options->WCH_thirdPartyUrl);
         $this->result->setSendContent($response)->setMsgType(MessageTemplate::THIRD)->send();
     }
 
