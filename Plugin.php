@@ -4,7 +4,7 @@
  * 
  * @package WeChatHelper
  * @author 冰剑
- * @version 2.2.0
+ * @version 2.2.1
  * @link http://www.binjoo.net
  * @dependence 14.3.14
  */
@@ -15,7 +15,7 @@ class WeChatHelper_Plugin implements Typecho_Plugin_Interface {
             /**
              * 创建关键字表
              */
-            $db->query("CREATE TABLE IF NOT EXISTS " . $db->getPrefix() . 'wxh_keywords' . " (
+            $db->query("CREATE TABLE IF NOT EXISTS " . $db->getPrefix() . 'wch_keywords' . " (
                       `kid` int(11) NOT NULL AUTO_INCREMENT,
                       `name` varchar(100) NOT NULL,
                       `rid` int(11) NOT NULL,
@@ -24,7 +24,7 @@ class WeChatHelper_Plugin implements Typecho_Plugin_Interface {
             /**
              * 创建自定义回复表
              */
-            $db->query("CREATE TABLE IF NOT EXISTS " . $db->getPrefix() . 'wxh_reply' . " (
+            $db->query("CREATE TABLE IF NOT EXISTS " . $db->getPrefix() . 'wch_reply' . " (
                       `rid` int(11) NOT NULL AUTO_INCREMENT,
                       `keywords` varchar(200) DEFAULT NULL,
                       `type` varchar(20) DEFAULT 'text',
@@ -38,7 +38,7 @@ class WeChatHelper_Plugin implements Typecho_Plugin_Interface {
             /**
              * 创建用户管理表
              */
-            $db->query("CREATE TABLE IF NOT EXISTS " . $db->getPrefix() . 'wxh_users' . " (
+            $db->query("CREATE TABLE IF NOT EXISTS " . $db->getPrefix() . 'wch_users' . " (
                       `uid` int(11) NOT NULL AUTO_INCREMENT,
                       `openid` varchar(50) DEFAULT '',
                       `nickname` varchar(100) DEFAULT '',
@@ -59,7 +59,7 @@ class WeChatHelper_Plugin implements Typecho_Plugin_Interface {
             /**
              * 创建自定义菜单表
              */
-            $db->query("CREATE TABLE IF NOT EXISTS " . $db->getPrefix() . 'wxh_menus' . " (
+            $db->query("CREATE TABLE IF NOT EXISTS " . $db->getPrefix() . 'wch_menus' . " (
                       `mid` int(11) NOT NULL AUTO_INCREMENT,
                       `level` varchar(10) DEFAULT 'button',
                       `name` varchar(200) DEFAULT '',
@@ -90,7 +90,7 @@ class WeChatHelper_Plugin implements Typecho_Plugin_Interface {
         $options = Typecho_Widget::widget('Widget_Options');
         if (isset($options->WeChatHelper_dropTable) && $options->WeChatHelper_dropTable) {
             if("Pdo_Mysql" === $db->getAdapterName() || "Mysql" === $db->getAdapterName()){
-               $db->query("drop table ".$db->getPrefix()."wxh_keywords, ".$db->getPrefix()."wxh_reply, ".$db->getPrefix()."wxh_users, ".$db->getPrefix()."wxh_menus");
+               $db->query("drop table ".$db->getPrefix()."wch_keywords, ".$db->getPrefix()."wch_reply, ".$db->getPrefix()."wch_users, ".$db->getPrefix()."wch_menus");
                $db->query($db->sql()->delete('table.options')->where('name like ?', "WeChatHelper_%"));
             }
         }

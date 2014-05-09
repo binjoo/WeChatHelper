@@ -1,6 +1,6 @@
 ## 插件说明 ##
 
- - 版本: v2.0.0
+ - 版本: v2.2.1
  - 作者: [冰剑](https://github.com/binjoo)
  - 主页: <https://github.com/typecho-fans/plugins/tree/master/WeChatHelper>
 
@@ -34,11 +34,6 @@
  - 新增用户积分；
  - 新增关注奖励积分设置；
  - 优化参数设置规则；
-
-#### v2.1.0
- - 新增用户管理；
- - 新增插件扩展页面；
- - 重新设计插件规则；
 
 #### v2.1.0
  - 新增用户管理；

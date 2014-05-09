@@ -18,19 +18,19 @@ class WeChatHelper_Widget_Users extends Widget_Abstract implements Widget_Interf
         return $this->_currentPage ? $this->_currentPage : 1;
     }
     public function select() {
-        return $this->db->select()->from('table.wxh_users');
+        return $this->db->select()->from('table.wch_users');
     }
     public function insert(array $options) {
-        return $this->db->query($this->db->insert('table.wxh_users')->rows($options));
+        return $this->db->query($this->db->insert('table.wch_users')->rows($options));
     }
     public function update(array $options, Typecho_Db_Query $condition){
-        return $this->db->query($condition->update('table.wxh_users')->rows($options));
+        return $this->db->query($condition->update('table.wch_users')->rows($options));
     }
     public function delete(Typecho_Db_Query $condition){
-        return $this->db->query($condition->delete('table.wxh_users'));
+        return $this->db->query($condition->delete('table.wch_users'));
     }
     public function size(Typecho_Db_Query $condition){
-        return $this->db->fetchObject($condition->select(array('COUNT(table.wxh_users.uid)' => 'num'))->from('table.wxh_users'))->num;
+        return $this->db->fetchObject($condition->select(array('COUNT(table.wch_users.uid)' => 'num'))->from('table.wch_users'))->num;
     }
 
     public function execute(){
@@ -38,13 +38,13 @@ class WeChatHelper_Widget_Users extends Widget_Abstract implements Widget_Interf
         $this->_currentPage = $this->request->get('page', 1);
 
         /** 构建基础查询 */
-        $select = $this->db->select()->from('table.wxh_users')->where('table.wxh_users.status = ?', '1');
+        $select = $this->db->select()->from('table.wch_users')->where('table.wch_users.status = ?', '1');
 
         /** 给计算数目对象赋值,克隆对象 */
         $this->_countSql = clone $select;
 
         /** 提交查询 */
-        $select->page($this->_currentPage, $this->parameter->pageSize)->order('table.wxh_users.uid', Typecho_Db::SORT_DESC);
+        $select->page($this->_currentPage, $this->parameter->pageSize)->order('table.wch_users.uid', Typecho_Db::SORT_DESC);
         $this->db->fetchAll($select, array($this, 'push'));
     }
 

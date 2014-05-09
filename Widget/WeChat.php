@@ -40,7 +40,7 @@ class WeChatHelper_Widget_WeChat extends Widget_Abstract implements Widget_Inter
             $val = $params['cmd'];
         }
 
-        $select = $this->db->select()->from('table.wxh_reply')->join('table.wxh_keywords', 'table.wxh_keywords.rid = table.wxh_reply.rid', Typecho_Db::LEFT_JOIN)->where('table.wxh_keywords.name = ?', $val)->where('table.wxh_reply.status = ?', 1)->limit(1);
+        $select = $this->db->select()->from('table.wch_reply')->join('table.wch_keywords', 'table.wch_keywords.rid = table.wch_reply.rid', Typecho_Db::LEFT_JOIN)->where('table.wch_keywords.name = ?', $val)->where('table.wch_reply.status = ?', 1)->limit(1);
         $custom = $this->db->fetchObject($select);
         if(isset($custom->content)){    //正常文本处理
             if($custom->type === 'text'){
@@ -93,7 +93,7 @@ class WeChatHelper_Widget_WeChat extends Widget_Abstract implements Widget_Inter
      * 是否带有参数
      */
     public function isParam(){
-        $select = $this->db->select()->from('table.wxh_reply')->join('table.wxh_keywords', 'table.wxh_keywords.rid = table.wxh_reply.rid', Typecho_Db::LEFT_JOIN)->where('table.wxh_reply.type = ?', 'addons')->where('table.wxh_reply.status = ?', 1);
+        $select = $this->db->select()->from('table.wch_reply')->join('table.wch_keywords', 'table.wch_keywords.rid = table.wch_reply.rid', Typecho_Db::LEFT_JOIN)->where('table.wch_reply.type = ?', 'addons')->where('table.wch_reply.status = ?', 1);
         $allAddons = $this->db->fetchAll($select);
         $result = NULL;
         foreach ($allAddons as $row) {

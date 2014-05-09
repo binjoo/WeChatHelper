@@ -16,30 +16,30 @@ class WeChatHelper_Widget_Menus extends Widget_Abstract implements Widget_Interf
     }
 
     public function select() {
-        return $this->db->select()->from('table.wxh_menus');
+        return $this->db->select()->from('table.wch_menus');
     }
     public function insert(array $options) {
-        return $this->db->query($this->db->insert('table.wxh_menus')->rows($options));
+        return $this->db->query($this->db->insert('table.wch_menus')->rows($options));
     }
     public function update(array $options, Typecho_Db_Query $condition){
-        return $this->db->query($condition->update('table.wxh_menus')->rows($options));
+        return $this->db->query($condition->update('table.wch_menus')->rows($options));
     }
     public function delete(Typecho_Db_Query $condition){
-        return $this->db->query($condition->delete('table.wxh_menus'));
+        return $this->db->query($condition->delete('table.wch_menus'));
     }
     public function size(Typecho_Db_Query $condition){
-        return $this->db->fetchObject($condition->select(array('COUNT(table.wxh_menus.uid)' => 'num'))->from('table.wxh_menus'))->num;
+        return $this->db->fetchObject($condition->select(array('COUNT(table.wch_menus.uid)' => 'num'))->from('table.wch_menus'))->num;
     }
 
     public function execute(){
         /** 构建基础查询 */
-        $select = $this->select()->from('table.wxh_menus');
+        $select = $this->select()->from('table.wch_menus');
 
         /** 给计算数目对象赋值,克隆对象 */
         $this->_countSql = clone $select;
 
         /** 提交查询 */
-        $select->order('table.wxh_menus.sort', Typecho_Db::SORT_ASC);
+        $select->order('table.wch_menus.sort', Typecho_Db::SORT_ASC);
         $this->db->fetchAll($select, array($this, 'push'));
     }
 
@@ -73,7 +73,7 @@ class WeChatHelper_Widget_Menus extends Widget_Abstract implements Widget_Interf
         /** 构建表格 */
         $form = new Typecho_Widget_Helper_Form($this->security->getIndex('action/WeChat?menus'), Typecho_Widget_Helper_Form::POST_METHOD);
 
-        $select = $this->select()->where('table.wxh_menus.parent = ?', '0')->order('table.wxh_menus.order', Typecho_Db::SORT_ASC);
+        $select = $this->select()->where('table.wch_menus.parent = ?', '0')->order('table.wch_menus.order', Typecho_Db::SORT_ASC);
         $buttonMenus = $this->db->fetchAll($select);
 
         $parent = '<select name="parent">';
@@ -179,7 +179,7 @@ class WeChatHelper_Widget_Menus extends Widget_Abstract implements Widget_Interf
 
     public function checkLevelNum($value, $mid){
         $mid = $this->request->get($mid);
-        $select = $this->db->sql()->select(array('COUNT(table.wxh_menus.mid)' => 'num'))->from('table.wxh_menus')->where('level = ?', $value);
+        $select = $this->db->sql()->select(array('COUNT(table.wch_menus.mid)' => 'num'))->from('table.wch_menus')->where('level = ?', $value);
         if($value == 'button'){
             if($mid){
                 $select->where('mid <> ?', $mid);
@@ -219,7 +219,7 @@ class WeChatHelper_Widget_Menus extends Widget_Abstract implements Widget_Interf
 
     public function getParentOrder($menu){
         if($menu['level'] == 'sub_button'){
-            $select = $this->db->sql()->select(array('table.wxh_menus.order' => 'order'))->from('table.wxh_menus')->where('mid = ?', $menu['parent']);
+            $select = $this->db->sql()->select(array('table.wch_menus.order' => 'order'))->from('table.wch_menus')->where('mid = ?', $menu['parent']);
             $order = $this->db->fetchObject($select)->order;
             $menu['sort'] = ($order * 10) + $menu['order'];
         }else{
@@ -289,7 +289,7 @@ class WeChatHelper_Widget_Menus extends Widget_Abstract implements Widget_Interf
         /** 插入数据 */
         $this->db->query($this->update($menu, $this->db->sql()->where('mid = ?', $this->request->filter('int')->mid)));
         if($menu['level'] == 'button'){
-            $this->db->query($this->db->sql()->update('table.wxh_menus')->where('parent = ?', $menu['mid'])->expression('sort', ($menu['order'] * 10) . ' + `order` '));
+            $this->db->query($this->db->sql()->update('table.wch_menus')->where('parent = ?', $menu['mid'])->expression('sort', ($menu['order'] * 10) . ' + `order` '));
         }
         $this->push($menu);
 
@@ -325,7 +325,7 @@ class WeChatHelper_Widget_Menus extends Widget_Abstract implements Widget_Interf
             $this->response->redirect(Helper::url('WeChatHelper/Page/Menus.php', $this->options->adminUrl));
         }
         $create['button'] = array();
-        $select = $this->select()->where('level = ?', 'button')->order('table.wxh_menus.order', Typecho_Db::SORT_ASC);
+        $select = $this->select()->where('level = ?', 'button')->order('table.wch_menus.order', Typecho_Db::SORT_ASC);
         $buttons = $this->db->fetchAll($select);
         if (count($buttons) > 3 || !count($buttons)) {
             $this->widget('Widget_Notice')->set(_t('错误：一级菜单没有找到或超过三个.'), 'error');
@@ -334,7 +334,7 @@ class WeChatHelper_Widget_Menus extends Widget_Abstract implements Widget_Interf
         foreach ($buttons as $row) {
             $button = array();
             $select = "";
-            $select = $this->select()->where('level = ?', 'sub_button')->where('parent = ?', $row['mid'])->order('table.wxh_menus.order', Typecho_Db::SORT_ASC);
+            $select = $this->select()->where('level = ?', 'sub_button')->where('parent = ?', $row['mid'])->order('table.wch_menus.order', Typecho_Db::SORT_ASC);
             $subButtons = $this->db->fetchAll($select);
             if (!count($subButtons)) {  //没有二级菜单
                 $button['type'] = urlencode($row['type']);

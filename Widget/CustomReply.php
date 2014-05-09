@@ -18,30 +18,30 @@ class WeChatHelper_Widget_CustomReply extends Widget_Abstract implements Widget_
         return $this->_currentPage ? $this->_currentPage : 1;
     }
     public function select() {
-        return $this->db->select()->from('table.wxh_reply');
+        return $this->db->select()->from('table.wch_reply');
     }
     public function insert(array $options) {
-        return $this->db->query($this->db->insert('table.wxh_reply')->rows($options));
+        return $this->db->query($this->db->insert('table.wch_reply')->rows($options));
     }
     public function update(array $options, Typecho_Db_Query $condition){
-        return $this->db->query($condition->update('table.wxh_reply')->rows($options));
+        return $this->db->query($condition->update('table.wch_reply')->rows($options));
     }
     public function delete(Typecho_Db_Query $condition){
-        return $this->db->query($condition->delete('table.wxh_reply'));
+        return $this->db->query($condition->delete('table.wch_reply'));
     }
     public function size(Typecho_Db_Query $condition){
-        return $this->db->fetchObject($condition->select(array('COUNT(table.wxh_reply.rid)' => 'num'))->from('table.wxh_reply'))->num;
+        return $this->db->fetchObject($condition->select(array('COUNT(table.wch_reply.rid)' => 'num'))->from('table.wch_reply'))->num;
     }
     public function execute(){
         $this->parameter->setDefault('pageSize=10');
         $this->_currentPage = $this->request->get('page', 1);
 
         /** 构建基础查询 */
-        $select = $this->db->select()->from('table.wxh_reply');
+        $select = $this->db->select()->from('table.wch_reply');
 
         /** 过滤分类 */
         if (NULL != ($keywords = $this->request->keywords)) {
-            $rids = $this->db->fetchAll($this->db->select('distinct rid')->from('table.wxh_keywords')->where('name like ?', '%' . $keywords . '%'));
+            $rids = $this->db->fetchAll($this->db->select('distinct rid')->from('table.wch_keywords')->where('name like ?', '%' . $keywords . '%'));
             foreach ($rids as $rid) {
                 $select->orWhere('rid = ?', $rid['rid']);
             }
@@ -56,7 +56,7 @@ class WeChatHelper_Widget_CustomReply extends Widget_Abstract implements Widget_
         $this->_countSql = clone $select;
 
         /** 提交查询 */
-        $select->page($this->_currentPage, $this->parameter->pageSize)->order('table.wxh_reply.rid', Typecho_Db::SORT_DESC);
+        $select->page($this->_currentPage, $this->parameter->pageSize)->order('table.wch_reply.rid', Typecho_Db::SORT_DESC);
         $this->db->fetchAll($select, array($this, 'push'));
     }
 
@@ -228,7 +228,7 @@ class WeChatHelper_Widget_CustomReply extends Widget_Abstract implements Widget_
 
         /** 更新数据 */
         $this->db->query($this->update($customReply, $this->db->sql()->where('rid = ?', $this->request->filter('int')->rid)));
-        $this->db->query($this->db->sql()->delete('table.wxh_keywords')->where('rid = ?', $customReply['rid']));
+        $this->db->query($this->db->sql()->delete('table.wch_keywords')->where('rid = ?', $customReply['rid']));
         $this->insertKeywords($customReply);
         $this->push($customReply);
 
@@ -249,7 +249,7 @@ class WeChatHelper_Widget_CustomReply extends Widget_Abstract implements Widget_
         if ($customreplys && is_array($customreplys)) {
             foreach ($customreplys as $customreply) {
                 if ($this->delete($this->db->sql()->where('rid = ?', $customreply))) {
-                    $this->db->query($this->db->sql()->delete('table.wxh_keywords')->where('rid = ?', $customreply));
+                    $this->db->query($this->db->sql()->delete('table.wch_keywords')->where('rid = ?', $customreply));
                     $deleteCount ++;
                 }
             }
@@ -268,7 +268,7 @@ class WeChatHelper_Widget_CustomReply extends Widget_Abstract implements Widget_
             if($value){
                 $keyObj['name'] = $value;
                 $keyObj['rid'] = $customReply['rid'];
-                $this->db->query($this->db->insert('table.wxh_keywords')->rows($keyObj));
+                $this->db->query($this->db->insert('table.wch_keywords')->rows($keyObj));
             }
         }
     }
@@ -279,7 +279,7 @@ class WeChatHelper_Widget_CustomReply extends Widget_Abstract implements Widget_
     public function keywordsExists($keywords) {
         foreach (explode(",", $keywords) as $key => $value) {
             if($value){
-                $select = $this->db->select()->from('table.wxh_keywords')->where('name = ?', $value);
+                $select = $this->db->select()->from('table.wch_keywords')->where('name = ?', $value);
                 if ($this->request->rid) {
                     $select->where('rid <> ?', $this->request->rid);
                 }
@@ -299,7 +299,7 @@ class WeChatHelper_Widget_CustomReply extends Widget_Abstract implements Widget_
      */
     public function typeExists($type) {
         if($this->request->type === 'system'){
-            $select = $this->db->select(array('COUNT(table.wxh_reply.rid)' => 'num'))->from('table.wxh_reply')->where('type = ?', 'system')->where('command = ?', $this->request->command);
+            $select = $this->db->select(array('COUNT(table.wch_reply.rid)' => 'num'))->from('table.wch_reply')->where('type = ?', 'system')->where('command = ?', $this->request->command);
             if(!is_null($this->request->rid)){
                 $select->where('rid <> ?', $this->request->rid);
             }
